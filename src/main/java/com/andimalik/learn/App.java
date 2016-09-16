@@ -12,6 +12,8 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
+import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
+
 /**
  * Hello world!
  *
@@ -21,8 +23,16 @@ public class App {
 		try {
 			Properties properties = App.loadMailConfigProperties();
 
+			String encryptedMailPassword = properties
+					.getProperty("mail.password");
+
+			String encryptionPassword = "bingo";
+			StandardPBEStringEncryptor encryptor = new StandardPBEStringEncryptor();
+			encryptor.setPassword(encryptionPassword);
+
 			final String mailUsername = properties.getProperty("mail.username");
-			final String mailPassword = properties.getProperty("mail.password");
+			final String mailPassword = encryptor
+					.decrypt(encryptedMailPassword);
 
 			Session session = Session.getDefaultInstance(properties,
 					new javax.mail.Authenticator() {
@@ -37,13 +47,12 @@ public class App {
 			message.setFrom(new InternetAddress(mailUsername));
 
 			message.addRecipients(Message.RecipientType.TO,
-					InternetAddress.parse("user2@host.tld,user3@host.tld"));
+					InternetAddress.parse("user2@host.tld"));
 
 			message.addRecipients(Message.RecipientType.CC,
-					InternetAddress.parse("user4@host.tld,user5@host.tld"));
+					InternetAddress.parse("user3@host.tld"));
 
-			message.addRecipients(Message.RecipientType.BCC,
-					"user6@host.tld,user7@host.tld");
+			message.addRecipients(Message.RecipientType.BCC, "user4@host.tld");
 
 			message.setSubject("A Subject");
 			message.setContent("<h1>A Title</h1><p>A paragraph.</p>",

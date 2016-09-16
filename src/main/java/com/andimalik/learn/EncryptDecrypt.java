@@ -6,7 +6,7 @@ public class EncryptDecrypt {
 
 	public static void main(String[] args) {
 		String encryptionPassword = "bingo";
-		String data = "trololo";
+		String data = "password";
 		// Bpyx8vGaV7v6XMp0dNymqQ==
 		System.out.println(data);
 
